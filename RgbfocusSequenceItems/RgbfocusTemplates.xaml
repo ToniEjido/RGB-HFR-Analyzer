@@ -1,0 +1,79 @@
+<ResourceDictionary
+    x:Class="AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusTestCategory.PluginItemTemplate"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusTestCategory"
+    xmlns:loc="clr-namespace:AntonioAguadoRovira.NINA.Rgbfocus.Localization"
+    xmlns:mini="clr-namespace:NINA.View.Sequencer.MiniSequencer;assembly=NINA.Sequencer"
+    xmlns:nina="clr-namespace:NINA.View.Sequencer;assembly=NINA.Sequencer">
+    <!--  ===== Channel Autofocus (instruction) =====  -->
+    <DataTemplate DataType="{x:Type local:RgbAutofocusChannelInstruction}">
+        <nina:SequenceBlockView>
+            <nina:SequenceBlockView.SequenceItemContent>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Text="{loc:T Seq.ChannelToFocus}" />
+                    <ComboBox MinWidth="80" Margin="8,0,0,0" ItemsSource="{Binding Channels}" SelectedItem="{Binding ChannelDisplay}" />
+                </StackPanel>
+            </nina:SequenceBlockView.SequenceItemContent>
+        </nina:SequenceBlockView>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusTestCategory.RgbAutofocusChannelInstruction_Mini">
+        <mini:MiniSequenceItem>
+            <mini:MiniSequenceItem.SequenceItemContent>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="{Binding ChannelDisplay}" />
+                </StackPanel>
+            </mini:MiniSequenceItem.SequenceItemContent>
+        </mini:MiniSequenceItem>
+    </DataTemplate>
+
+    <!--  ===== Channel Change and Refocus (trigger with a plan of steps) =====  -->
+    <DataTemplate DataType="{x:Type local:RgbChannelPlanTrigger}">
+        <nina:SequenceBlockView>
+            <nina:SequenceBlockView.SequenceItemContent>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center" Text="{loc:T Seq.Plan}" />
+                        <TextBlock Margin="14,0,0,0" VerticalAlignment="Center" Text="{loc:T Seq.Repeat}" ToolTip="{loc:T Seq.RepeatTip}" />
+                        <CheckBox Margin="6,0,0,0" VerticalAlignment="Center" IsChecked="{Binding Repeat}" ToolTip="{loc:T Seq.RepeatTip}" />
+                        <TextBlock Margin="14,0,0,0" VerticalAlignment="Center" Text="{loc:T Seq.FocusAtStart}" ToolTip="{loc:T Seq.FocusAtStartTip}" />
+                        <CheckBox Margin="6,0,0,0" VerticalAlignment="Center" IsChecked="{Binding FocusAtStart}" ToolTip="{loc:T Seq.FocusAtStartTip}" />
+                        <Button Width="30" Height="26" Margin="14,0,0,0" Command="{Binding AddStepCommand}" ToolTip="{loc:T Seq.AddStepTip}">
+                            <TextBlock Foreground="White" Text="+" />
+                        </Button>
+                    </StackPanel>
+                    <ItemsControl Margin="0,6,0,0" ItemsSource="{Binding Steps}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,2" Orientation="Horizontal">
+                                    <TextBlock VerticalAlignment="Center" Text="{loc:T Seq.Channel}" />
+                                    <ComboBox MinWidth="70" Margin="6,0,0,0" ItemsSource="{Binding Channels}" SelectedItem="{Binding ChannelDisplay}" />
+                                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="{loc:T Seq.For}" />
+                                    <TextBox MinWidth="40" Margin="6,0,0,0" Text="{Binding Exposures}" TextAlignment="Right" />
+                                    <TextBlock Margin="6,0,0,0" VerticalAlignment="Center" Text="{loc:T Seq.ExposuresThen}" />
+                                    <Button Width="30" Height="26" Margin="12,0,0,0"
+                                            Command="{Binding DataContext.RemoveStepCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}" ToolTip="{loc:T Seq.RemoveStepTip}">
+                                        <TextBlock Foreground="White" Text="−" />
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </nina:SequenceBlockView.SequenceItemContent>
+            <nina:SequenceBlockView.SequenceItemProgressContent>
+                <TextBlock VerticalAlignment="Center" Text="{Binding ProgressText}" />
+            </nina:SequenceBlockView.SequenceItemProgressContent>
+        </nina:SequenceBlockView>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusTestCategory.RgbChannelPlanTrigger_Mini">
+        <mini:MiniTrigger>
+            <mini:MiniTrigger.TriggerProgressContent>
+                <TextBlock VerticalAlignment="Center" Text="{Binding ProgressText}" />
+            </mini:MiniTrigger.TriggerProgressContent>
+        </mini:MiniTrigger>
+    </DataTemplate>
+</ResourceDictionary>

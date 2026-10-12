@@ -1,0 +1,260 @@
+<ResourceDictionary
+    x:Class="AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables.MyPluginDockableTemplates"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:alt="clr-namespace:NINA.WPF.Base.View;assembly=NINA.WPF.Base"
+    xmlns:local="clr-namespace:AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables"
+    xmlns:loc="clr-namespace:AntonioAguadoRovira.NINA.Rgbfocus.Localization"
+    xmlns:mini="clr-namespace:NINA.View.Sequencer.MiniSequencer;assembly=NINA.Sequencer"
+    xmlns:nina="clr-namespace:NINA.View.Sequencer;assembly=NINA.Sequencer"
+    xmlns:util="clr-namespace:NINA.Core.Utility;assembly=NINA.Core">
+
+    <!--  Iconos copiados de NINA (SVGDictionary.xaml) para que los botones sean iguales  -->
+    <GeometryGroup x:Key="AntonioAguadoRovira.NINA.Rgbfocus_ZoomIn">
+        <PathGeometry Figures="M 332.287,0.333313C 226.401,0.333313 140.26,86.3693 140.26,192.124C 140.26,236.432 155.385,277.276 180.745,309.781L 0,466.599L 24.4173,494.667L 206.364,336.807C 240.099,366.135 284.151,383.916 332.287,383.916C 438.167,383.916 524.312,297.88 524.312,192.124C 524.312,86.3693 438.172,0.333313 332.287,0.333313 Z M 332.287,362.583C 238.167,362.583 161.593,286.115 161.593,192.124C 161.593,98.1346 238.167,21.6667 332.287,21.6667C 426.407,21.6667 502.979,98.1346 502.979,192.124C 502.979,286.115 426.407,362.583 332.287,362.583 Z " />
+        <PathGeometry Figures="M 343.943,116.343L 320.625,116.343L 320.625,180.468L 256.5,180.468L 256.5,203.785L 320.625,203.785L 320.625,267.905L 343.943,267.905L 343.943,203.785L 408.068,203.785L 408.068,180.468L 343.943,180.468" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="AntonioAguadoRovira.NINA.Rgbfocus_ZoomOut">
+        <PathGeometry Figures="M 332.287,0.333313C 226.401,0.333313 140.26,86.3693 140.26,192.124C 140.26,236.432 155.385,277.276 180.745,309.781L 0,466.599L 24.4173,494.667L 206.364,336.807C 240.099,366.135 284.151,383.916 332.287,383.916C 438.167,383.916 524.312,297.88 524.312,192.124C 524.312,86.3693 438.172,0.333313 332.287,0.333313 Z M 332.287,362.583C 238.167,362.583 161.593,286.115 161.593,192.124C 161.593,98.1346 238.167,21.6667 332.287,21.6667C 426.407,21.6667 502.979,98.1346 502.979,192.124C 502.979,286.115 426.407,362.583 332.287,362.583 Z " />
+        <PathGeometry Figures="M 256.5,180.468L 408.057,180.468L 408.057,203.197L 256.5,203.197L 256.5,180.468 Z " />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="AntonioAguadoRovira.NINA.Rgbfocus_Stretch">
+        <PathGeometry Figures="M 66.136,64.36L 41.2867,39.516L 39.7813,41.0213L 64.6253,65.8707L 55.4693,65.8707L 55.4693,68L 67.1973,68L 68.2653,66.932L 68.2653,55.204L 66.136,55.204" />
+        <PathGeometry Figures="M 26.9787,28.224L 28.4893,26.7133L 3.64,1.87067L 12.8027,1.87067L 12.8027,-0.265343L 1.068,-0.265343L 0,0.802666L 0,12.5373L 2.136,12.5373L 2.136,3.37466" />
+        <PathGeometry Figures="M 43.4213,26.0893L 26.3547,43.156L 24.844,41.6467L 41.912,24.584" />
+    </GeometryGroup>
+
+    <DataTemplate x:Key="AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables.RgbfocusDockable_Dockable">
+        <Grid Margin="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" MinHeight="120" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="65" />
+                <ColumnDefinition Width="65" />
+                <ColumnDefinition Width="65" />
+                <ColumnDefinition Width="65" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Fila 1: zoom (izquierda) y canales (derecha). Siempre visibles  -->
+            <StackPanel Orientation="Horizontal">
+                <Button Width="36" Height="36" Margin="1.5" Click="ZoomIn_Click" Tag="{Binding ElementName=Viewer}" ToolTip="{loc:T Tip.ZoomIn}">
+                    <Grid>
+                        <Path Width="24" Height="24" Margin="0" Data="{StaticResource AntonioAguadoRovira.NINA.Rgbfocus_ZoomIn}" Fill="White" Stretch="Uniform" UseLayoutRounding="True" />
+                    </Grid>
+                </Button>
+                <Button Width="36" Height="36" Margin="1.5" Click="ZoomOut_Click" Tag="{Binding ElementName=Viewer}" ToolTip="{loc:T Tip.ZoomOut}">
+                    <Grid>
+                        <Path Width="24" Height="24" Margin="0" Data="{StaticResource AntonioAguadoRovira.NINA.Rgbfocus_ZoomOut}" Fill="White" Stretch="Uniform" UseLayoutRounding="True" />
+                    </Grid>
+                </Button>
+                <Button Width="36" Height="36" Margin="1.5" Click="Fit_Click" Tag="{Binding ElementName=Viewer}" ToolTip="{loc:T Tip.Fit}">
+                    <Grid>
+                        <Path Width="24" Height="24" Margin="0" Data="{StaticResource AntonioAguadoRovira.NINA.Rgbfocus_Stretch}" Fill="White" Stretch="Uniform" UseLayoutRounding="True" />
+                    </Grid>
+                </Button>
+                <Button Width="36" Height="36" Margin="1.5" Click="OneToOne_Click" Tag="{Binding ElementName=Viewer}" ToolTip="{loc:T Tip.OneToOne}">
+                    <TextBlock FontSize="14" Foreground="White" Text="1:1" />
+                </Button>
+                <TextBlock Width="48" Margin="4,0,0,0" VerticalAlignment="Center" FontSize="12" Text="{Binding ZoomText}" />
+            </StackPanel>
+            <Button Grid.Row="0" Grid.Column="1" Height="36" Margin="1.5" Padding="0" Command="{Binding SelectChannelCommand}" CommandParameter="R" ToolTip="{Binding TipR}">
+                <Grid Width="62" Height="36">
+                    <Border Background="{Binding VisR.SelectionBrush}" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="{Binding VisR.LetterForeground}" Text="R" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="14" Foreground="{Binding VisR.ValueForeground}" Text="{Binding HfrR}" />
+                    </StackPanel>
+                </Grid>
+            </Button>
+            <Button Grid.Row="0" Grid.Column="2" Height="36" Margin="1.5" Padding="0" Command="{Binding SelectChannelCommand}" CommandParameter="G" ToolTip="{Binding TipG}">
+                <Grid Width="62" Height="36">
+                    <Border Background="{Binding VisG.SelectionBrush}" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="{Binding VisG.LetterForeground}" Text="G" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="14" Foreground="{Binding VisG.ValueForeground}" Text="{Binding HfrG}" />
+                    </StackPanel>
+                </Grid>
+            </Button>
+            <Button Grid.Row="0" Grid.Column="3" Height="36" Margin="1.5" Padding="0" Command="{Binding SelectChannelCommand}" CommandParameter="B" ToolTip="{Binding TipB}">
+                <Grid Width="62" Height="36">
+                    <Border Background="{Binding VisB.SelectionBrush}" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="{Binding VisB.LetterForeground}" Text="B" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="14" Foreground="{Binding VisB.ValueForeground}" Text="{Binding HfrB}" />
+                    </StackPanel>
+                </Grid>
+            </Button>
+            <Button Grid.Row="0" Grid.Column="4" Height="36" Margin="1.5" Padding="0" Command="{Binding SelectChannelCommand}" CommandParameter="L" ToolTip="{Binding TipL}">
+                <Grid Width="62" Height="36">
+                    <Border Background="{Binding VisL.SelectionBrush}" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="{Binding VisL.LetterForeground}" Text="RGB" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="14" Foreground="{Binding VisL.ValueForeground}" Text="{Binding HfrL}" />
+                    </StackPanel>
+                </Grid>
+            </Button>
+
+            <!--  Fila 2: interruptores, bajo los botones de canal  -->
+            <Button Grid.Row="1" Grid.Column="1" Height="24" Margin="1.5" Padding="0" Command="{Binding ToggleWarningsCommand}" ToolTip="{loc:T Tip.Warnings}">
+                <Grid Width="62" Height="24">
+                    <Border Background="{Binding VisWarn.SelectionBrush}" />
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="10" Foreground="{Binding VisWarn.ValueForeground}" Text="{Binding WarningsButtonText}" />
+                </Grid>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="2" Height="24" Margin="1.5" Padding="0" Command="{Binding ToggleZonesCommand}" ToolTip="{loc:T Tip.Zones}">
+                <Grid Width="62" Height="24">
+                    <Border Background="{Binding VisZones.SelectionBrush}" />
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="10" Foreground="{Binding VisZones.ValueForeground}" Text="{loc:T Btn.Zones}" />
+                </Grid>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="3" Height="24" Margin="1.5" Padding="0" Command="{Binding ToggleStarsCommand}" ToolTip="{loc:T Tip.Stars}">
+                <Grid Width="62" Height="24">
+                    <Border Background="{Binding VisStars.SelectionBrush}" />
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="10" Foreground="{Binding VisStars.ValueForeground}" Text="{loc:T Btn.Stars}" />
+                </Grid>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="4" Height="24" Margin="1.5" Padding="0" Command="{Binding ToggleMixCommand}" ToolTip="{loc:T Tip.Mix}">
+                <Grid Width="62" Height="24">
+                    <Border Background="{Binding VisMix.SelectionBrush}" />
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="10" Foreground="{Binding VisMix.ValueForeground}" Text="{loc:T Btn.Mix}" />
+                </Grid>
+            </Button>
+
+            <!--  Avisos: solo con el botón activado y si hay algo importante  -->
+            <Border Grid.Row="2" Grid.ColumnSpan="5" Margin="0,2,0,0" Padding="6,3" Background="#33FF4D4D" BorderBrush="#FFFF5555" BorderThickness="1"
+                    Visibility="{Binding WarningVisibility}">
+                <TextBlock Foreground="#FFFF8A8A" TextWrapping="Wrap" Text="{Binding Warnings}" />
+            </Border>
+
+            <!--  Imagen del canal seleccionado (ya estirada, reducida a un máximo de 3000 px de ancho)  -->
+            <ScrollViewer x:Name="Viewer" Grid.Row="3" Grid.ColumnSpan="5" ToolTip="{Binding InfoText}" ToolTipService.IsEnabled="{Binding HasInfo}" ToolTipService.ShowDuration="120000" ToolTipService.InitialShowDelay="300" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Cursor="Arrow"
+                          LostMouseCapture="Viewer_LostMouseCapture" PreviewMouseLeftButtonDown="Viewer_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="Viewer_PreviewMouseLeftButtonUp"
+                          PreviewMouseMove="Viewer_PreviewMouseMove" PreviewMouseWheel="Viewer_PreviewMouseWheel" SizeChanged="Viewer_SizeChanged">
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid.LayoutTransform>
+                        <ScaleTransform ScaleX="{Binding DisplayScale}" ScaleY="{Binding DisplayScale}" />
+                    </Grid.LayoutTransform>
+                    <Image RenderOptions.BitmapScalingMode="HighQuality" Source="{Binding DisplayImage}" Stretch="None" />
+
+                    <!--  Rejilla 3x3 superpuesta: cada celda mide siempre lo mismo en pantalla aunque cambie el zoom  -->
+                    <ItemsControl ItemsSource="{Binding ZoneCells}" Visibility="{Binding ZoneOverlayVisibility}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="3" Rows="3" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{Binding Background}" BorderBrush="#99FFFFFF" BorderThickness="{Binding LineThickness}" ToolTip="{Binding ToolTip}">
+                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock HorizontalAlignment="Center" FontSize="{Binding TextSize}" FontWeight="SemiBold" Foreground="White" Text="{Binding Text}" />
+                                        <TextBlock HorizontalAlignment="Center" FontSize="{Binding SubTextSize}" Foreground="#E6FFFFFF" Text="{Binding Count}" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </ScrollViewer>
+
+            <!--  Mensaje cuando todavía no hay imagen  -->
+            <TextBlock Grid.Row="3" Grid.ColumnSpan="5" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" TextWrapping="Wrap"
+                       Visibility="{Binding NoImageVisibility}" Text="{Binding Status}" />
+        </Grid>
+    </DataTemplate>
+
+    <!--  Panel "RGB Autoenfoque": mismo motor y gráfica que el autoenfoque de NINA, con selector de canal  -->
+    <DataTemplate x:Key="AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables.RgbAutofocusDockable_Dockable">
+        <Grid Margin="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+                <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="{loc:T AF.ChannelLabel}" />
+                <ComboBox Width="90" VerticalAlignment="Center" IsEnabled="{Binding IsIdle}" ItemsSource="{Binding Channels}" SelectedItem="{Binding SelectedChannel}"
+                          ToolTip="{loc:T AF.ChannelTip}" />
+                <Button MinWidth="150" Height="30" Margin="12,0,0,0" Command="{Binding StartCommand}" Visibility="{Binding StartVisibility}">
+                    <TextBlock Foreground="White" Text="{loc:T AF.Start}" />
+                </Button>
+                <Button MinWidth="150" Height="30" Margin="12,0,0,0" Command="{Binding CancelCommand}" Visibility="{Binding CancelVisibility}">
+                    <TextBlock Foreground="White" Text="{loc:T AF.Cancel}" />
+                </Button>
+            </StackPanel>
+
+            <!--  Modo global: el canal elegido se usa en todos los autoenfoques de NINA, también los del secuenciador  -->
+            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,8,0,0" Orientation="Horizontal"
+                        ToolTip="{loc:T AF.GlobalTip}">
+                <TextBlock VerticalAlignment="Center" Text="{loc:T AF.GlobalLabel}" />
+                <CheckBox Margin="8,0,0,0" VerticalAlignment="Center" IsChecked="{Binding UseForAllAutofocus}" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,6,0,0">
+                <TextBlock Foreground="#FF8DE08D" TextWrapping="Wrap" Text="{Binding GlobalHint}" />
+                <TextBlock TextWrapping="Wrap" Text="{Binding Status}" />
+                <TextBlock Foreground="#FFFF8A8A" TextWrapping="Wrap" Text="{Binding Message}" />
+            </StackPanel>
+
+            <!--  La gráfica la dibuja NINA con su propia plantilla. La Viewbox la escala conservando la proporción para que quepa en el alto del panel  -->
+            <Viewbox Grid.Row="3" Grid.Column="0" Margin="0,8,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform" StretchDirection="Both">
+                <ContentControl Width="440" Height="640" Content="{Binding AutoFocusVM}" />
+            </Viewbox>
+
+            <StackPanel Grid.Row="3" Grid.Column="1" Margin="18,8,0,0" VerticalAlignment="Top">
+                <TextBlock FontWeight="Bold" Text="{loc:T AF.Table}" />
+                <Grid Margin="0,2,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="70" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Opacity="0.7" Text="{loc:T AF.ColChannel}" />
+                    <TextBlock Grid.Column="1" Opacity="0.7" Text="{loc:T AF.ColPosition}" />
+                    <TextBlock Grid.Column="2" Opacity="0.7" Text="{loc:T AF.ColHfr}" />
+                </Grid>
+                <ItemsControl Margin="0,4,0,0" ItemsSource="{Binding Records}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition Width="70" />
+                                    <ColumnDefinition Width="55" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Margin="0,4" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding Channel}" />
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Position}" ToolTip="{loc:T AF.PositionTip}" />
+                                <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding Hfr}" ToolTip="{loc:T AF.HfrTip}" />
+                                <Button Grid.Column="3" Width="34" Height="22" Margin="0,2,8,2" Command="{Binding GoCommand}" ToolTip="{loc:T AF.GoTip}">
+                                    <TextBlock Foreground="White" Text="{loc:T AF.Go}" />
+                                </Button>
+                                <TextBlock Grid.Column="4" VerticalAlignment="Center" Foreground="#FFFFC66B" TextWrapping="Wrap" Text="{Binding Note}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+    <!--  This geometrygroup defines a custom SVG to be used with the plugin dockable  -->
+    <GeometryGroup x:Key="AntonioAguadoRovira.NINA.Rgbfocus_AltitudeSVG">
+        <PathGeometry Figures="M 1.01725e-005,0.349426L 1.01725e-005,421.333L 625.953,421.333L 625.953,0.349426M 15.12,15.4694L 610.839,15.4694L 610.839,406.213L 15.12,406.213" />
+        <PathGeometry Figures="M 312.276,113.647C 296.183,113.224 280.485,120.109 265.011,132.781C 249.537,145.453 233.833,164.005 216.543,188.573C 181.953,237.709 141.089,311.073 86.8653,409.609L 101.464,417.641C 155.667,319.141 196.527,245.964 230.167,198.172C 246.991,174.276 262.027,156.771 275.568,145.677C 289.109,134.589 300.709,130.011 311.833,130.303C 322.959,130.595 334.657,135.844 348.131,147.563C 361.604,159.276 376.453,177.308 393.005,201.5C 426.104,249.891 466.1,322.781 519.157,419.229L 533.751,411.199C 480.704,314.761 440.724,241.745 406.756,192.095C 389.776,167.271 374.313,148.251 359.063,134.989C 343.813,121.729 328.371,114.073 312.276,113.647 Z " />
+    </GeometryGroup>
+</ResourceDictionary>
