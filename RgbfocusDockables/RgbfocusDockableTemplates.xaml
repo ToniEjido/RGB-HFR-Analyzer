@@ -64,43 +64,43 @@
                 </Button>
                 <TextBlock Width="48" Margin="4,0,0,0" VerticalAlignment="Center" FontSize="12" Text="{Binding ZoomText}" />
             </StackPanel>
-            <Button Grid.Row="0" Grid.Column="1" Height="36" Margin="1.5" Padding="0" Command="{Binding SelectChannelCommand}" CommandParameter="R" ToolTip="{Binding TipR}">
-                <Grid Width="62" Height="36">
+            <Button Grid.Row="0" Grid.Column="1" Height="44" Margin="1.5" Padding="0" Command="{Binding SelectChannelCommand}" CommandParameter="R" ToolTip="{Binding TipR}">
+                <Grid Width="62" Height="44">
                     <Border Background="{Binding VisR.SelectionBrush}" />
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock HorizontalAlignment="Center" FontSize="9" FontWeight="Bold" LineHeight="10" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisR.LetterForeground}" Text="R" />
-                        <TextBlock HorizontalAlignment="Center" FontSize="13" LineHeight="15" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisR.ValueForeground}" Text="{Binding HfrR}" />
-                        <TextBlock HorizontalAlignment="Center" FontSize="9" LineHeight="10" LineStackingStrategy="BlockLineHeight" Opacity="0.8" Foreground="{Binding VisR.ValueForeground}" Text="{Binding StarsR}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="12" FontWeight="Bold" LineHeight="14" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisR.LetterForeground}" Text="R" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="14" LineHeight="16" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisR.ValueForeground}" Text="{Binding HfrR}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="11" LineHeight="13" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisR.ValueForeground}" Text="{Binding StarsR, StringFormat='{}{0} ★'}" />
                     </StackPanel>
                 </Grid>
             </Button>
-            <Button Grid.Row="0" Grid.Column="2" Height="36" Margin="1.5" Padding="0" Command="{Binding SelectChannelCommand}" CommandParameter="G" ToolTip="{Binding TipG}">
-                <Grid Width="62" Height="36">
+            <Button Grid.Row="0" Grid.Column="2" Height="44" Margin="1.5" Padding="0" Command="{Binding SelectChannelCommand}" CommandParameter="G" ToolTip="{Binding TipG}">
+                <Grid Width="62" Height="44">
                     <Border Background="{Binding VisG.SelectionBrush}" />
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock HorizontalAlignment="Center" FontSize="9" FontWeight="Bold" LineHeight="10" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisG.LetterForeground}" Text="G" />
-                        <TextBlock HorizontalAlignment="Center" FontSize="13" LineHeight="15" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisG.ValueForeground}" Text="{Binding HfrG}" />
-                        <TextBlock HorizontalAlignment="Center" FontSize="9" LineHeight="10" LineStackingStrategy="BlockLineHeight" Opacity="0.8" Foreground="{Binding VisG.ValueForeground}" Text="{Binding StarsG}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="12" FontWeight="Bold" LineHeight="14" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisG.LetterForeground}" Text="G" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="14" LineHeight="16" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisG.ValueForeground}" Text="{Binding HfrG}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="11" LineHeight="13" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisG.ValueForeground}" Text="{Binding StarsG, StringFormat='{}{0} ★'}" />
                     </StackPanel>
                 </Grid>
             </Button>
-            <Button Grid.Row="0" Grid.Column="3" Height="36" Margin="1.5" Padding="0" Command="{Binding SelectChannelCommand}" CommandParameter="B" ToolTip="{Binding TipB}">
-                <Grid Width="62" Height="36">
+            <Button Grid.Row="0" Grid.Column="3" Height="44" Margin="1.5" Padding="0" Command="{Binding SelectChannelCommand}" CommandParameter="B" ToolTip="{Binding TipB}">
+                <Grid Width="62" Height="44">
                     <Border Background="{Binding VisB.SelectionBrush}" />
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock HorizontalAlignment="Center" FontSize="9" FontWeight="Bold" LineHeight="10" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisB.LetterForeground}" Text="B" />
-                        <TextBlock HorizontalAlignment="Center" FontSize="13" LineHeight="15" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisB.ValueForeground}" Text="{Binding HfrB}" />
-                        <TextBlock HorizontalAlignment="Center" FontSize="9" LineHeight="10" LineStackingStrategy="BlockLineHeight" Opacity="0.8" Foreground="{Binding VisB.ValueForeground}" Text="{Binding StarsB}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="12" FontWeight="Bold" LineHeight="14" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisB.LetterForeground}" Text="B" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="14" LineHeight="16" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisB.ValueForeground}" Text="{Binding HfrB}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="11" LineHeight="13" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisB.ValueForeground}" Text="{Binding StarsB, StringFormat='{}{0} ★'}" />
                     </StackPanel>
                 </Grid>
             </Button>
-            <Button Grid.Row="0" Grid.Column="4" Height="36" Margin="1.5" Padding="0" Command="{Binding SelectChannelCommand}" CommandParameter="L" ToolTip="{Binding TipL}">
-                <Grid Width="62" Height="36">
+            <Button Grid.Row="0" Grid.Column="4" Height="44" Margin="1.5" Padding="0" Command="{Binding SelectChannelCommand}" CommandParameter="L" ToolTip="{Binding TipL}">
+                <Grid Width="62" Height="44">
                     <Border Background="{Binding VisL.SelectionBrush}" />
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock HorizontalAlignment="Center" FontSize="9" FontWeight="Bold" LineHeight="10" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisL.LetterForeground}" Text="RGB" />
-                        <TextBlock HorizontalAlignment="Center" FontSize="13" LineHeight="15" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisL.ValueForeground}" Text="{Binding HfrL}" />
-                        <TextBlock HorizontalAlignment="Center" FontSize="9" LineHeight="10" LineStackingStrategy="BlockLineHeight" Opacity="0.8" Foreground="{Binding VisL.ValueForeground}" Text="{Binding StarsL}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="12" FontWeight="Bold" LineHeight="14" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisL.LetterForeground}" Text="RGB" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="14" LineHeight="16" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisL.ValueForeground}" Text="{Binding HfrL}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="11" LineHeight="13" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisL.ValueForeground}" Text="{Binding StarsL, StringFormat='{}{0} ★'}" />
                     </StackPanel>
                 </Grid>
             </Button>

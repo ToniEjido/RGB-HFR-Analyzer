@@ -559,10 +559,10 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
             sb.AppendLine(Diagnostics);
             sb.AppendLine();
             sb.AppendLine(Loc.T("Info.ChannelSummary"));
-            sb.AppendLine($"R: {HfrR} · {StarsR}");
-            sb.AppendLine($"G: {HfrG} · {StarsG}");
-            sb.AppendLine($"B: {HfrB} · {StarsB}");
-            sb.Append($"RGB: {HfrL} · {StarsL}");
+            sb.AppendLine($"R: {HfrR} · {StarsR} ★");
+            sb.AppendLine($"G: {HfrG} · {StarsG} ★");
+            sb.AppendLine($"B: {HfrB} · {StarsB} ★");
+            sb.Append($"RGB: {HfrL} · {StarsL} ★");
             return sb.ToString();
         }
 

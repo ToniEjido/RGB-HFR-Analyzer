@@ -25,7 +25,7 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.Localization {
             A("Info.Capture", "Captured: {0}", "Captura: {0}");
             A("Info.Showing", "Showing: {0}", "Mostrando: {0}");
             A("Info.Hfr", "HFR: {0}  (median {1}, σ {2})", "HFR: {0}  (mediana {1}, σ {2})");
-            A("Info.Stars", "Stars detected: {0}", "Estrellas detectadas: {0}");
+            A("Info.Stars", "Stars detected: {0} ★", "Estrellas detectadas: {0} ★");
             A("Info.ChannelSummary", "Summary by channel (HFR · stars)", "Resumen por canal (HFR · estrellas)");
             A("Diag.RelSigma", "Relative σ: {0}", "σ relativa: {0}");
             A("Diag.StdError", "Error of the mean: {0}  ({1} valid stars)", "Error de la media: {0}  ({1} estrellas válidas)");
@@ -42,7 +42,7 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.Localization {
             A("Zone.B", "Bottom centre", "Abajo centro");
             A("Zone.BR", "Bottom right", "Abajo derecha");
             A("Zone.Few", "{0}\nFew stars ({1}): not calculated", "{0}\nPocas estrellas ({1}): no se calcula");
-            A("Zone.Tip", "{0}  ({1})\nHFR (median): {2}\nHFR (mean): {3}\nσ: {4}  ({5} % of the HFR)\nError of the mean: ±{6}\nStars: {7}\nVs. global median ({8}): {9} %", "{0}  ({1})\nHFR (mediana): {2}\nHFR (media): {3}\nσ: {4}  ({5} % del HFR)\nError de la media: ±{6}\nEstrellas: {7}\nRespecto a la mediana global ({8}): {9} %");
+            A("Zone.Tip", "{0}  ({1})\nHFR (median): {2}\nHFR (mean): {3}\nσ: {4}  ({5} % of the HFR)\nError of the mean: ±{6}\nStars: {7} ★\nVs. global median ({8}): {9} %", "{0}  ({1})\nHFR (mediana): {2}\nHFR (media): {3}\nσ: {4}  ({5} % del HFR)\nError de la media: ±{6}\nEstrellas: {7} ★\nRespecto a la mediana global ({8}): {9} %");
             A("Btn.Warnings", "Warnings", "Avisos");
             A("Btn.WarningsN", "Warnings ({0})", "Avisos ({0})");
             A("Btn.Zones", "Zones", "Zonas");
