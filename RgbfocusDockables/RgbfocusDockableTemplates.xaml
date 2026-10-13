@@ -68,8 +68,9 @@
                 <Grid Width="62" Height="36">
                     <Border Background="{Binding VisR.SelectionBrush}" />
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="{Binding VisR.LetterForeground}" Text="R" />
-                        <TextBlock HorizontalAlignment="Center" FontSize="14" Foreground="{Binding VisR.ValueForeground}" Text="{Binding HfrR}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="9" FontWeight="Bold" LineHeight="10" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisR.LetterForeground}" Text="R" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="13" LineHeight="15" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisR.ValueForeground}" Text="{Binding HfrR}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="9" LineHeight="10" LineStackingStrategy="BlockLineHeight" Opacity="0.8" Foreground="{Binding VisR.ValueForeground}" Text="{Binding StarsR}" />
                     </StackPanel>
                 </Grid>
             </Button>
@@ -77,8 +78,9 @@
                 <Grid Width="62" Height="36">
                     <Border Background="{Binding VisG.SelectionBrush}" />
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="{Binding VisG.LetterForeground}" Text="G" />
-                        <TextBlock HorizontalAlignment="Center" FontSize="14" Foreground="{Binding VisG.ValueForeground}" Text="{Binding HfrG}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="9" FontWeight="Bold" LineHeight="10" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisG.LetterForeground}" Text="G" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="13" LineHeight="15" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisG.ValueForeground}" Text="{Binding HfrG}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="9" LineHeight="10" LineStackingStrategy="BlockLineHeight" Opacity="0.8" Foreground="{Binding VisG.ValueForeground}" Text="{Binding StarsG}" />
                     </StackPanel>
                 </Grid>
             </Button>
@@ -86,8 +88,9 @@
                 <Grid Width="62" Height="36">
                     <Border Background="{Binding VisB.SelectionBrush}" />
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="{Binding VisB.LetterForeground}" Text="B" />
-                        <TextBlock HorizontalAlignment="Center" FontSize="14" Foreground="{Binding VisB.ValueForeground}" Text="{Binding HfrB}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="9" FontWeight="Bold" LineHeight="10" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisB.LetterForeground}" Text="B" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="13" LineHeight="15" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisB.ValueForeground}" Text="{Binding HfrB}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="9" LineHeight="10" LineStackingStrategy="BlockLineHeight" Opacity="0.8" Foreground="{Binding VisB.ValueForeground}" Text="{Binding StarsB}" />
                     </StackPanel>
                 </Grid>
             </Button>
@@ -95,8 +98,9 @@
                 <Grid Width="62" Height="36">
                     <Border Background="{Binding VisL.SelectionBrush}" />
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="{Binding VisL.LetterForeground}" Text="RGB" />
-                        <TextBlock HorizontalAlignment="Center" FontSize="14" Foreground="{Binding VisL.ValueForeground}" Text="{Binding HfrL}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="9" FontWeight="Bold" LineHeight="10" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisL.LetterForeground}" Text="RGB" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="13" LineHeight="15" LineStackingStrategy="BlockLineHeight" Foreground="{Binding VisL.ValueForeground}" Text="{Binding HfrL}" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="9" LineHeight="10" LineStackingStrategy="BlockLineHeight" Opacity="0.8" Foreground="{Binding VisL.ValueForeground}" Text="{Binding StarsL}" />
                     </StackPanel>
                 </Grid>
             </Button>
