@@ -126,6 +126,21 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
         private readonly IProfileService appProfileService;
         private int analyzing;
 
+        // Resultados de las últimas imágenes analizadas. Al elegir una imagen del histórico NINA la vuelve a leer del disco
+        // (un RAW se decodifica de nuevo y no es idéntico a la captura) y no recalcula su HFR, sino que muestra el guardado.
+        // Aquí se hace lo mismo: se reutiliza el resultado de la captura, localizado por el análisis de estrellas de la imagen,
+        // que NINA conserva en el histórico y es el mismo objeto que tenía la imagen original.
+        private sealed class CachedAnalysis {
+            public WeakReference<IStarDetectionAnalysis> Key;
+            public RgbHfrResult Result;
+            public string Captured;
+            public readonly Dictionary<string, ChannelDetail> Mixes = new Dictionary<string, ChannelDetail>();
+        }
+        private const int CacheSize = 40;
+        private readonly List<CachedAnalysis> cache = new List<CachedAnalysis>();
+        private CachedAnalysis currentEntry;
+        private bool viewingCached;
+
         [ImportingConstructor]
         public RgbfocusDockable(
             IProfileService profileService,
@@ -484,8 +499,10 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
                 while (true) {
                     string key = selectedChannel;
                     if (!IsMixKey(key) || details.ContainsKey(key)) break;
+                    if (viewingCached) break; // los canales de esta imagen ya no están en memoria: no se puede mezclar
 
                     int generation = analysisGeneration;
+                    var entryForMix = currentEntry;
                     Status = Loc.T("Status.Mixing", string.Join("+", key.ToCharArray()));
                     var detail = await Task.Run(() => analyzer.AnalyzeMixAsync(key, System.Threading.CancellationToken.None));
 
@@ -493,6 +510,7 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
                     if (detail == null) { Status = captureStatus; break; }
 
                     details[key] = detail;
+                    if (entryForMix != null) entryForMix.Mixes[key] = detail;
                     Status = captureStatus;
                     UpdateDisplay();
                 }
@@ -501,6 +519,55 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
                 Status = captureStatus;
             } finally {
                 System.Threading.Interlocked.Exchange(ref mixBusy, 0);
+            }
+        }
+
+        /// <summary>Muestra un resultado en el panel (calculado ahora o recuperado de la caché). Hilo de UI.</summary>
+        private void ApplyResult(RgbHfrResult result, string captured, CachedAnalysis entry, bool fromCache) {
+            // Primero los textos de los botones y la fecha: el cuadro emergente los usa al construirse
+            captureStatus = captured;
+            HfrR = Fmt(result.HfrR);
+            HfrG = Fmt(result.HfrG);
+            HfrB = Fmt(result.HfrB);
+            HfrL = Fmt(result.HfrL);
+            StarsR = result.StarsR.ToString(CultureInfo.InvariantCulture);
+            StarsG = result.StarsG.ToString(CultureInfo.InvariantCulture);
+            StarsB = result.StarsB.ToString(CultureInfo.InvariantCulture);
+            StarsL = result.StarsL.ToString(CultureInfo.InvariantCulture);
+            currentEntry = entry;
+            viewingCached = fromCache;
+            SetDetails(result);
+            if (entry != null) {
+                foreach (var kv in entry.Mixes) details[kv.Key] = kv.Value;
+                UpdateDisplay();
+            }
+
+            if (result.StarsDetected < 5) {
+                Status = Loc.T("Status.FewStars", result.StarsDetected);
+                return;
+            }
+            Status = captured;
+            _ = EnsureMixAsync(); // si hay una mezcla seleccionada, se calcula también para esta imagen
+        }
+
+        private CachedAnalysis FindCached(IStarDetectionAnalysis key) {
+            if (key == null) return null;
+            lock (cache) {
+                foreach (var c in cache) {
+                    if (c.Key.TryGetTarget(out var k) && ReferenceEquals(k, key)) return c;
+                }
+            }
+            return null;
+        }
+
+        private CachedAnalysis AddToCache(IStarDetectionAnalysis key, RgbHfrResult result, string captured) {
+            if (key == null) return null;
+            lock (cache) {
+                cache.RemoveAll(c => !c.Key.TryGetTarget(out var k) || ReferenceEquals(k, key));
+                var entry = new CachedAnalysis { Key = new WeakReference<IStarDetectionAnalysis>(key), Result = result, Captured = captured };
+                cache.Add(entry);
+                while (cache.Count > CacheSize) cache.RemoveAt(0);
+                return entry;
             }
         }
 
@@ -525,7 +592,9 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
         private void UpdateDisplay() {
             if (IsMixKey(selectedChannel) && !details.ContainsKey(selectedChannel) && details.ContainsKey("L")) {
                 // Mezcla pendiente de calcular: se mantiene lo que había en pantalla hasta que esté lista
-                InfoText = Loc.T("Info.Calculating", SelectedChannelName);
+                InfoText = viewingCached
+                    ? Loc.T("Info.MixUnavailable", SelectedChannelName)
+                    : Loc.T("Info.Calculating", SelectedChannelName);
                 return;
             }
 
@@ -588,6 +657,16 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
                 // NINA vuelve a preparar la misma imagen al cambiar el stretch u otras opciones: no se repite el análisis
                 if (lastAnalyzed != null && lastAnalyzed.TryGetTarget(out var previous) && ReferenceEquals(previous, image)) return;
 
+                // Imagen del histórico ya analizada al capturarla: se muestra ese resultado, sin recalcular
+                if (e.Parameters?.DetectStars == false) {
+                    var hit = FindCached(image.StarDetectionAnalysis);
+                    if (hit != null) {
+                        lastAnalyzed = new WeakReference<IImageData>(image);
+                        RunOnUi(() => ApplyResult(hit.Result, hit.Captured, hit, true));
+                        return;
+                    }
+                }
+
                 if (!image.Properties.IsBayered) {
                     RunOnUi(() => Status = Loc.T("Status.NotColor"));
                     return;
@@ -608,27 +687,9 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
                 RunOnUi(() => Status = Loc.T("Status.Analyzing"));
                 var result = await analyzer.AnalyzeAsync(image, System.Threading.CancellationToken.None);
                 string captured = FormatCaptureTime(image);
+                var entry = AddToCache(image.StarDetectionAnalysis, result, captured);
 
-                RunOnUi(() => {
-                    // Primero los textos de los botones y la fecha: el cuadro emergente los usa al construirse
-                    captureStatus = captured;
-                    HfrR = Fmt(result.HfrR);
-                    HfrG = Fmt(result.HfrG);
-                    HfrB = Fmt(result.HfrB);
-                    HfrL = Fmt(result.HfrL);
-                    StarsR = result.StarsR.ToString(CultureInfo.InvariantCulture);
-                    StarsG = result.StarsG.ToString(CultureInfo.InvariantCulture);
-                    StarsB = result.StarsB.ToString(CultureInfo.InvariantCulture);
-                    StarsL = result.StarsL.ToString(CultureInfo.InvariantCulture);
-                    SetDetails(result);
-
-                    if (result.StarsDetected < 5) {
-                        Status = Loc.T("Status.FewStars", result.StarsDetected);
-                        return;
-                    }
-                    Status = captured;
-                    _ = EnsureMixAsync(); // si hay una mezcla seleccionada, se calcula también para esta imagen
-                });
+                RunOnUi(() => ApplyResult(result, captured, entry, false));
             } catch (Exception ex) {
                 Logger.Error($"RGB HFR Analyzer: error analysing the image: {ex}");
                 RunOnUi(() => Status = Loc.T("Status.Error"));

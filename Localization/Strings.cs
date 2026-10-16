@@ -21,6 +21,7 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.Localization {
             A("Status.Error", "Error analysing the image (see the NINA log).", "Error al analizar la imagen (ver el log de NINA).");
             A("Status.Mixing", "Calculating the {0} mix...", "Calculando la mezcla {0}...");
             A("Info.Calculating", "{0}: calculating...", "{0}: calculando...");
+            A("Info.MixUnavailable", "{0}: this mix was not calculated when the image was captured.", "{0}: esta mezcla no se calculó al capturar la imagen.");
             A("Info.CaptureUnknown", "Captured: date not available", "Captura: fecha no disponible");
             A("Info.Capture", "Captured: {0}", "Captura: {0}");
             A("Info.Showing", "Showing: {0}", "Mostrando: {0}");
