@@ -1,30 +1,31 @@
 using NINA.Core.Interfaces;
+using NINA.Equipment.Interfaces.Mediator;
 using NINA.Image.ImageAnalysis;
+using NINA.Profile.Interfaces;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AntonioAguadoRovira.NINA.Rgbfocus.Autofocus {
 
     /// <summary>
-    /// Ejecuta un autoenfoque de NINA midiendo un canal concreto: fija el canal activo, selecciona el detector del plugin
-    /// mientras dura y después devuelve el detector que había antes. Lo usan las instrucciones del secuenciador.
+    /// Ejecuta un autoenfoque de NINA midiendo un canal concreto. Antes de empezar comprueba que ese canal se puede medir
+    /// (si no, falla con un mensaje claro), bloquea el canal y el detector mientras dura (ChannelRunScope) y solo anota el canal
+    /// en el patrón de nombre de archivo si el autoenfoque terminó bien. Lo usan las instrucciones del secuenciador.
     /// </summary>
     public static class ChannelAutofocus {
-        public static async Task RunAsync(string channel, IPluggableBehaviorSelector<IStarDetection> selector, Func<Task> runAutofocus) {
-            var ours = selector.Behaviors.FirstOrDefault(b => b.ContentId == typeof(RgbChannelStarDetection).FullName);
-            if (ours == null) {
-                throw new InvalidOperationException(Localization.Loc.T("AF.NoDetector"));
-            }
+        public static async Task RunAsync(
+            string channel,
+            IPluggableBehaviorSelector<IStarDetection> selector,
+            ICameraMediator camera,
+            IFilterWheelMediator filterWheel,
+            IProfileService profile,
+            Func<Task> runAutofocus) {
 
-            var previous = selector.SelectedBehavior;
-            FocusChannelState.ActiveChannel = channel;
-            try {
-                selector.SelectedBehavior = ours;
+            ChannelPreflight.EnsureForAutofocus(channel, camera, filterWheel, profile);
+
+            using (ChannelRunScope.Begin(channel, selector)) {
                 await runAutofocus();
                 FocusFilePattern.Update(channel);
-            } finally {
-                if (previous != null) selector.SelectedBehavior = previous;
             }
         }
     }

@@ -62,7 +62,7 @@ RGB HFR Analyzer te da esa información dentro del flujo normal de NINA, **reuti
 **Requisitos**
 
 - N.I.N.A. **3.2** o superior (desarrollado y probado con 3.2.0.9001).
-- Una **cámara en color con matriz Bayer** (OSC). Con cámaras monocromas el panel avisa de que la imagen no es de color.
+- Una **cámara en color con matriz Bayer** (OSC), sin binning. Con cámaras monocromas el panel avisa de que la imagen no es de color.
 - Windows 10/11 x64 (el que requiere NINA).
 
 **Instalación**
@@ -181,18 +181,19 @@ El recuadro rojo aparece **solo** si se cumple alguna de estas condiciones (en c
 | **Pocas estrellas** | Menos de 100 estrellas utilizables en algún canal. |
 | **Mucha dispersión** | σ relativa de más del 35 %. |
 
-No se avisa de que unos canales estén mejor enfocados que otros: con un acromático es lo normal y es lo que el plugin ayuda a estudiar.
+No se avisa de que unos canales estén mejor enfocados que otros: con un acromático o un filtro de banda estrecha es lo normal y es lo que el plugin ayuda a estudiar.
 
 ## Limitaciones
 
-- **Solo cámaras en color (Bayer).** Con cámaras monocromas no hay canales que separar.
+- **Solo cámaras en color (Bayer), sin binning.** Con cámaras monocromas, o con una cámara en color que use binning (que mezcla píxeles vecinos y destruye el patrón de color), no hay canales que separar. El autoenfoque por canal lo comprueba antes de empezar y se detiene con un mensaje claro en lugar de medir otra cosa; elige RGB, o usa binning 1x1 en el autoenfoque.
 - **Tiempo de análisis.** Cada imagen requiere varias detecciones (R, G, B y RGB) en segundo plano: varios segundos con imágenes de 24 MP. Si llega otra imagen mientras se analiza la anterior, se omite.
 - **Memoria.** Se conservan en memoria los canales R, G y B de la última imagen (unos 150 MB con 24 MP) para calcular mezclas bajo demanda.
 - **El autoenfoque tarda algo más**, porque hay que extraer y estirar el canal antes de detectar.
 - **El canal azul suele tener menos señal:** su curva de enfoque puede salir más ruidosa y quizá convenga más exposición en el autoenfoque.
 - **Detector seleccionado en el perfil.** NINA guarda el detector seleccionado en el perfil. Si NINA se cierra a mitad de un autoenfoque lanzado desde el panel, podría quedar seleccionado el detector del plugin; se corrige en *Opciones > Imagen > Detector de estrellas*.
 - **El foco se desplaza con la temperatura.** Las posiciones guardadas por canal pueden quedar obsoletas si la temperatura cambia mucho, y la tabla no se conserva al cerrar NINA.
-- **Disparador de secuenciador.** Cuenta las exposiciones LIGHT del historial de imágenes: si el historial se vacía, el plan vuelve a empezar. Si un autoenfoque falla, el plan no avanza y lo reintenta antes de la siguiente exposición.
+- **Disparador de secuenciador.** Cuenta las exposiciones LIGHT del historial de imágenes: si el historial se vacía, el plan vuelve a empezar. Si un autoenfoque falla, el plan no avanza y lo reintenta antes de la siguiente exposición. Como los disparadores de autoenfoque de NINA, no empieza un autoenfoque que no pueda terminar antes de un volteo meridiano programado; lo vuelve a intentar antes de la siguiente exposición.
+- **Canal fijo durante el autoenfoque.** Mientras corre un autoenfoque, el canal y el detector de estrellas no se pueden cambiar (el selector queda desactivado), así una misma curva de enfoque nunca mezcla canales. Si activas «usar en todos los autoenfoques», los autoenfoques propios de NINA no quedan protegidos igual: no cambies el canal mientras uno está en marcha.
 - **Versiones de NINA.** El plugin usa la API de NINA 3.x; futuras versiones pueden requerir ajustes.
 - **Los comentarios del código** están mayoritariamente en español.
 

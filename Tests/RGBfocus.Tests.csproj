@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Pruebas de la lógica del autoenfoque por canal. No dependen de NINA: compilan directamente los tres archivos
+    de lógica pura del plugin, así que se ejecutan sin tener NINA instalado (dotnet test Tests).
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>AntonioAguadoRovira.NINA.Rgbfocus.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="NUnit" Version="3.14.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Autofocus\FocusChannelState.cs" Link="Plugin\FocusChannelState.cs" />
+    <Compile Include="..\Autofocus\ChannelMeasurability.cs" Link="Plugin\ChannelMeasurability.cs" />
+    <Compile Include="..\Autofocus\ChannelPlanTracker.cs" Link="Plugin\ChannelPlanTracker.cs" />
+  </ItemGroup>
+</Project>

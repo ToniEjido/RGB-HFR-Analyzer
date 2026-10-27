@@ -8,8 +8,8 @@ using System.Runtime.InteropServices;
 // [MANDATORY] The assembly versioning
 // Should be incremented for each new release build of a plugin
 // 0.9.x.x = public beta (still being tested on real equipment)
-[assembly: AssemblyVersion("0.9.0.0")]
-[assembly: AssemblyFileVersion("0.9.0.0")]
+[assembly: AssemblyVersion("0.9.1.0")]
+[assembly: AssemblyFileVersion("0.9.1.0")]
 
 // [MANDATORY] The name of your plugin
 [assembly: AssemblyTitle("RGB HFR Analyzer")]
@@ -74,7 +74,7 @@ Key features:
  - File name pattern $$FOCUSCHANNEL$$ with the channel of the last autofocus, to sort your frames by focus channel.
  - English and Spanish interface (follows N.I.N.A.'s language, selectable in Options > Plugins).
 
-It measures; it does not change your images. Nothing is written to FITS headers or files. Requires a colour camera with a Bayer matrix (mono cameras have no channels to separate).
+It measures; it does not change your images. Nothing is written to FITS headers or files. Requires a colour camera with a Bayer matrix, without binning (mono cameras, or binned images, have no channels to separate).
 
 This plugin was developed with the help of an AI assistant (Claude) and tested by its author. Feedback and bug reports are welcome on the GitHub page.")]
 

@@ -86,7 +86,7 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusTestCategory {
             new RunAutofocus(profileService, history, cameraMediator, filterWheelMediator, focuserMediator, autoFocusVMFactory);
 
         public override async Task Execute(IProgress<ApplicationStatus> progress, CancellationToken token) {
-            await ChannelAutofocus.RunAsync(channel, detectorSelector, () => CreateAutofocus().Execute(progress, token));
+            await ChannelAutofocus.RunAsync(channel, detectorSelector, cameraMediator, filterWheelMediator, profileService, () => CreateAutofocus().Execute(progress, token));
         }
 
         private IList<string> issues = new List<string>();
@@ -103,6 +103,11 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusTestCategory {
             var i = new List<string>();
             if (!cameraMediator.GetInfo().Connected) i.Add(Localization.Loc.T("Seq.NoCamera"));
             if (!focuserMediator.GetInfo().Connected) i.Add(Localization.Loc.T("Seq.NoFocuser"));
+            if (cameraMediator.GetInfo().Connected) {
+                // El canal elegido tiene que poder medirse con esta cámara y este binning de autoenfoque
+                var problem = ChannelPreflight.Check(channel, cameraMediator, filterWheelMediator, profileService, out int bx, out int by);
+                if (problem != MeasurabilityProblem.None) i.Add(ChannelPreflight.Describe(problem, channel, bx, by));
+            }
             Issues = i;
             return i.Count == 0;
         }

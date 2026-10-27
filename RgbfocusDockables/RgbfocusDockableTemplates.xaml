@@ -190,7 +190,7 @@
 
             <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal">
                 <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="{loc:T AF.ChannelLabel}" />
-                <ComboBox Width="90" VerticalAlignment="Center" IsEnabled="{Binding IsIdle}" ItemsSource="{Binding Channels}" SelectedItem="{Binding SelectedChannel}"
+                <ComboBox Width="90" VerticalAlignment="Center" IsEnabled="{Binding IsChannelEditable}" ItemsSource="{Binding Channels}" SelectedItem="{Binding SelectedChannel}"
                           ToolTip="{loc:T AF.ChannelTip}" />
                 <Button MinWidth="150" Height="30" Margin="12,0,0,0" Command="{Binding StartCommand}" Visibility="{Binding StartVisibility}">
                     <TextBlock Foreground="White" Text="{loc:T AF.Start}" />
@@ -204,7 +204,7 @@
             <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,8,0,0" Orientation="Horizontal"
                         ToolTip="{loc:T AF.GlobalTip}">
                 <TextBlock VerticalAlignment="Center" Text="{loc:T AF.GlobalLabel}" />
-                <CheckBox Margin="8,0,0,0" VerticalAlignment="Center" IsChecked="{Binding UseForAllAutofocus}" />
+                <CheckBox Margin="8,0,0,0" VerticalAlignment="Center" IsEnabled="{Binding IsChannelEditable}" IsChecked="{Binding UseForAllAutofocus}" />
             </StackPanel>
 
             <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,6,0,0">

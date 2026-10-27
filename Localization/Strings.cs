@@ -74,6 +74,12 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.Localization {
             A("AF.HfrTip", "HFR at the best point", "HFR en el mejor punto");
             A("AF.Go", "Go", "Ir");
             A("AF.GoTip", "Move the focuser to this position", "Mover el enfocador a esta posición");
+            A("AF.NotColor", "Channel {0} cannot be measured: the camera or the image is not colour (Bayer). Choose RGB, or use a colour camera.",
+                             "No se puede medir el canal {0}: la cámara o la imagen no es de color (Bayer). Elige RGB, o usa una cámara de color.");
+            A("AF.Binned", "Channel {0} cannot be measured with binning {1}x{2}: binning mixes neighbouring pixels and destroys the colour pattern. Use binning 1x1 for autofocus, or choose RGB.",
+                           "No se puede medir el canal {0} con binning {1}x{2}: el binning mezcla píxeles vecinos y destruye el patrón de color. Usa binning 1x1 en el autoenfoque, o elige RGB.");
+            A("AF.BadChannel", "Unknown channel: {0}.", "Canal desconocido: {0}.");
+            A("AF.RunInProgress", "Another channel autofocus is already running.", "Ya hay otro autoenfoque por canal en marcha.");
             A("AF.NoDetector", "The plugin's star detector was not found.", "No se encontró el detector de estrellas del plugin.");
             A("AF.NoCamera", "The camera is not connected.", "La cámara no está conectada.");
             A("AF.NoFocuser", "The focuser is not connected.", "El enfocador no está conectado.");

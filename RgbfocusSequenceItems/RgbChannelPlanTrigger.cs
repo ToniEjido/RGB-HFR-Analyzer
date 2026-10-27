@@ -11,6 +11,7 @@ using NINA.Sequencer.Container;
 using NINA.Sequencer.Interfaces;
 using NINA.Sequencer.SequenceItem;
 using NINA.Sequencer.SequenceItem.Autofocus;
+using NINA.Sequencer.Utility;
 using NINA.Sequencer.Trigger;
 using NINA.WPF.Base.Interfaces;
 using NINA.WPF.Base.Interfaces.ViewModel;
@@ -81,10 +82,7 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusTestCategory {
         private readonly IPluggableBehaviorSelector<IStarDetection> detectorSelector;
 
         // Estado de ejecución (no se guarda en el archivo de secuencia)
-        private bool started;
-        private bool finished;
-        private int currentStep = -1;
-        private int baseCount;
+        private readonly ChannelPlanTracker plan = new ChannelPlanTracker();
 
         [ImportingConstructor]
         public RgbChannelPlanTrigger(
@@ -154,54 +152,55 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusTestCategory {
             if (!(nextItem is IExposureItem exposure) || exposure.ImageType != "LIGHT") return false;
             if (Steps == null || Steps.Count == 0) return false;
 
-            int lights = LightCount();
-            if (lights < baseCount) {
-                // El historial se ha vaciado: empieza una sesión nueva
-                started = false;
-                finished = false;
-                currentStep = -1;
-                baseCount = 0;
-            }
-            if (finished) return false;
+            var evaluation = plan.Evaluate(
+                LightCount(),
+                Steps.Select(s => s.Exposures).ToList(),
+                Repeat,
+                FocusAtStart,
+                () => IsTooCloseToMeridianFlip(nextItem));
 
-            if (!started) {
-                if (FocusAtStart) return true;
-
-                // Sin autoenfoque inicial: se arranca el plan con el canal del primer tramo ya activo
-                started = true;
-                currentStep = 0;
-                baseCount = lights;
-                FocusChannelState.ActiveChannel = Steps[0].Channel;
-                return false;
+            if (evaluation.StartedWithoutFocus) {
+                // El plan empieza sin autoenfoque inicial: el primer canal ya está activo
+                FocusChannelState.TrySelect(Steps[0].Channel);
             }
 
-            var step = Steps[Math.Min(currentStep, Steps.Count - 1)];
-            int taken = lights - baseCount;
-            ProgressText = $"{step.ChannelDisplay}: {Math.Min(taken, step.Exposures)}/{step.Exposures}";
-
-            if (taken < step.Exposures) return false;
-
-            bool isLast = currentStep >= Steps.Count - 1;
-            if (isLast && !Repeat) {
-                finished = true;
-                ProgressText = Localization.Loc.T("Seq.PlanDone");
-                return false;
+            if (evaluation.Step >= 0 && evaluation.Step < Steps.Count) {
+                var step = Steps[evaluation.Step];
+                ProgressText = $"{step.ChannelDisplay}: {evaluation.Taken}/{step.Exposures}";
             }
-            return true;
+
+            switch (evaluation.Decision) {
+                case PlanDecision.Done:
+                    ProgressText = Localization.Loc.T("Seq.PlanDone");
+                    return false;
+                case PlanDecision.PostponedMeridianFlip:
+                    Logger.Warning("RGB HFR Analyzer: the channel change and refocus should run, but the meridian flip is too close to finish it first");
+                    return false;
+                case PlanDecision.Focus:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Igual que los disparadores de autoenfoque de NINA: si hay un volteo meridiano programado y el autoenfoque (más la exposición
+        /// siguiente) no termina antes, no se dispara; se vuelve a comprobar antes de la siguiente exposición.
+        /// </summary>
+        private bool IsTooCloseToMeridianFlip(ISequenceItem nextItem) {
+            var duration = CreateAutofocus().GetEstimatedDuration() + (nextItem?.GetEstimatedDuration() ?? TimeSpan.Zero);
+            return ItemUtility.IsTooCloseToMeridianFlip(Parent, duration);
         }
 
         public override async Task Execute(ISequenceContainer context, IProgress<ApplicationStatus> progress, CancellationToken token) {
-            int next = !started ? 0 : currentStep + 1;
-            if (next >= Steps.Count) next = 0;
+            int next = plan.NextStep(Steps.Count);
             var step = Steps[next];
 
             Logger.Info($"RGB HFR Analyzer: switching to channel {step.ChannelDisplay} and refocusing (step {next + 1} of {Steps.Count})");
-            await ChannelAutofocus.RunAsync(step.Channel, detectorSelector, () => CreateAutofocus().Execute(progress, token));
+            await ChannelAutofocus.RunAsync(step.Channel, detectorSelector, cameraMediator, filterWheelMediator, profileService, () => CreateAutofocus().Execute(progress, token));
 
             // El estado solo avanza si el autoenfoque terminó bien
-            started = true;
-            currentStep = next;
-            baseCount = LightCount();
+            plan.Advance(next, LightCount());
             ProgressText = $"{step.ChannelDisplay}: 0/{step.Exposures}";
         }
 

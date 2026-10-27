@@ -12,6 +12,12 @@
   <ItemGroup>
     <PackageReference Include="NINA.Plugin" Version="3.0.0.2017-beta" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Las pruebas son otro proyecto: no forman parte del plugin -->
+    <Compile Remove="Tests\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="Tests\**" />
+  </ItemGroup>
   <PropertyGroup />
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="&#xD;&#xA;if not exist &quot;%25localappdata%25\NINA\Plugins\3.0.0&quot; (&#xD;&#xA;  echo &quot;Creating $(PlatformName) Plugins folder&quot;&#xD;&#xA;  mkdir &quot;%25localappdata%25\NINA\Plugins\3.0.0&quot;&#xD;&#xA;)&#xD;&#xA;if not exist &quot;%25localappdata%25\NINA\Plugins\3.0.0\$(TargetName)&quot; (&#xD;&#xA;  echo &quot;Creating $(PlatformName) Plugins $(TargetName) folder&quot;&#xD;&#xA;  mkdir &quot;%25localappdata%25\NINA\Plugins\3.0.0\$(TargetName)&quot;&#xD;&#xA;)&#xD;&#xA;&#xD;&#xA;echo &quot;Copying $(PlatformName) $(TargetFileName)&quot;&#xD;&#xA;xcopy &quot;$(TargetPath)&quot; &quot;%25localappdata%25\NINA\Plugins\3.0.0\$(TargetName)&quot; /h/i/c/k/e/r/y&#xD;&#xA;  " />

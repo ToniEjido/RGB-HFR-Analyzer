@@ -153,7 +153,9 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.Analysis {
             else if (channelKey == "R+B") channel = Mix(new List<ushort[]> { data.Red, data.Blue });
             else channel = channelKey == "R" ? data.Red : channelKey == "B" ? data.Blue : data.Green;
             if (channel == null || channel.Length == 0) {
-                return await builtIn.Detect(rendered, rendered.Image.Format, p, progress, token);
+                // No se mide otra cosa en silencio: sin canales separados, el canal pedido no se puede medir
+                throw new Autofocus.ChannelNotMeasurableException(Autofocus.MeasurabilityProblem.NotColor, channelKey,
+                    Autofocus.ChannelPreflight.Describe(Autofocus.MeasurabilityProblem.NotColor, channelKey, 1, 1));
             }
 
             var props = raw.Properties;

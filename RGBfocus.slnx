@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="RGBfocus.csproj" />
+  <Project Path="Tests/RGBfocus.Tests.csproj" />
 </Solution>

@@ -62,7 +62,7 @@ RGB HFR Analyzer gives you that information inside the normal N.I.N.A. workflow,
 **Requirements**
 
 - N.I.N.A. **3.2** or later (developed and tested with 3.2.0.9001).
-- A **colour camera with a Bayer matrix** (OSC). With mono cameras the panel tells you the image is not a colour image.
+- A **colour camera with a Bayer matrix** (OSC), without binning. With mono cameras the panel tells you the image is not a colour image.
 - Windows 10/11 x64 (what N.I.N.A. requires).
 
 **Installation**
@@ -181,18 +181,19 @@ The red box appears **only** if one of these conditions is met (in any analysed 
 | **Few stars** | Fewer than 100 usable stars in some channel. |
 | **High dispersion** | Relative σ above 35 %. |
 
-There is no warning for one channel being better focused than another: with an achromatic refractor that is normal, and it is what the plugin helps you study.
+There is no warning for one channel being better focused than another: with an achromatic refractor or a narrowband filter that is normal, and it is what the plugin helps you study.
 
 ## Limitations
 
-- **Colour (Bayer) cameras only.** With mono cameras there are no channels to split.
+- **Colour (Bayer) cameras only, without binning.** With mono cameras, or with a colour camera using binning (which mixes neighbouring pixels and destroys the colour pattern), there are no channels to split. Per-channel autofocus checks this before it starts and stops with a clear message instead of measuring something else; choose RGB, or use binning 1x1 for autofocus.
 - **Analysis time.** Each image needs several detections (R, G, B and RGB) in the background: several seconds with 24 MP images. If another image arrives while the previous one is being analysed, it is skipped.
 - **Memory.** The R, G and B channels of the last image are kept in memory (about 150 MB with 24 MP) to compute mixes on demand.
 - **Autofocus takes a little longer** because the channel has to be extracted and stretched before detection.
 - **Blue usually has less signal:** its focus curve can be noisier; you may need a longer exposure for the autofocus.
 - **Detector selected in the profile.** N.I.N.A. stores the selected star detector in the profile. If N.I.N.A. is closed in the middle of an autofocus started from the panel, the plugin's detector could stay selected; fix it in *Options > Imaging > Star detector*.
 - **Focus drifts with temperature.** Positions saved per channel can become obsolete if the temperature changes a lot, and the table is not kept after closing N.I.N.A.
-- **Sequencer trigger.** It counts LIGHT exposures in the image history: if the history is cleared the plan starts again. If an autofocus fails the plan does not advance and retries before the next exposure.
+- **Sequencer trigger.** It counts LIGHT exposures in the image history: if the history is cleared the plan starts again. If an autofocus fails the plan does not advance and retries before the next exposure. Like N.I.N.A.'s own autofocus triggers, it does not start an autofocus that could not finish before a scheduled meridian flip; it tries again before the next exposure.
+- **Channel fixed during an autofocus.** While an autofocus runs, the channel and the star detector cannot be changed (the selector is disabled), so one focus curve never mixes channels. If you turn on "use for all autofocus", N.I.N.A.'s own autofocus runs are not protected in the same way: do not change the channel while one is running.
 - **N.I.N.A. versions.** The plugin uses the N.I.N.A. 3.x API; future versions may need adjustments.
 - **Code comments** are mostly in Spanish.
 

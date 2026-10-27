@@ -87,7 +87,7 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
                 string saved = pluginSettings.GetValueString("AutofocusChannel", "G");
                 if (FocusChannelState.IsValid(saved)) {
                     selectedChannel = FocusChannelState.DisplayName(saved);
-                    FocusChannelState.ActiveChannel = saved;
+                    FocusChannelState.TrySelect(saved);
                 }
             } catch (Exception ex) {
                 Logger.Error($"RGB HFR Analyzer: could not read the saved channel: {ex.Message}");
@@ -97,6 +97,15 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
                 RaisePropertyChanged(nameof(UseForAllAutofocus));
                 RaisePropertyChanged(nameof(GlobalHint));
             };
+
+            // La selección mostrada sigue siempre al canal que mide el detector (también cuando un autoenfoque del secuenciador
+            // lo cambia) y no se puede editar mientras hay un autoenfoque en curso
+            FocusChannelState.ActiveChannelChanged += (s, e) => RunOnUi(SyncSelectedChannel);
+            FocusChannelState.RunStateChanged += (s, e) => RunOnUi(() => {
+                RaisePropertyChanged(nameof(IsChannelEditable));
+                RaisePropertyChanged(nameof(UseForAllAutofocus));
+                SyncSelectedChannel();
+            });
 
             Records = new ObservableCollection<FocusRecord>();
             StartCommand = new ActionCommand(async _ => await StartAsync());
@@ -111,15 +120,36 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
 
         public string[] Channels { get; } = { "R", "G", "B", "RGB", "R+G", "G+B", "R+B" };
 
+        private static void RunOnUi(Action action) {
+            var dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher == null || dispatcher.CheckAccess()) action();
+            else dispatcher.BeginInvoke(action);
+        }
+
+        /// <summary>El canal se puede cambiar solo si no hay ningún autoenfoque en curso (ni de este panel ni del secuenciador).</summary>
+        public bool IsChannelEditable => !isRunning && !FocusChannelState.IsRunActive;
+
+        /// <summary>Pone en pantalla el canal que mide el detector, sin guardarlo como preferencia del usuario.</summary>
+        private void SyncSelectedChannel() {
+            string display = FocusChannelState.DisplayName(FocusChannelState.ActiveChannel);
+            if (selectedChannel != display) selectedChannel = display;
+            RaisePropertyChanged(nameof(SelectedChannel));
+            RaisePropertyChanged(nameof(GlobalHint));
+        }
+
         private string selectedChannel = "G";
         public string SelectedChannel {
             get => selectedChannel;
             set {
+                string key = FocusChannelState.FromDisplayName(value);
+                // Con un autoenfoque en marcha el canal no cambia: se vuelve a mostrar el que se está midiendo
+                if (!FocusChannelState.TrySelect(key)) {
+                    RaisePropertyChanged();
+                    return;
+                }
                 selectedChannel = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(GlobalHint));
-                string key = FocusChannelState.FromDisplayName(value);
-                FocusChannelState.ActiveChannel = key;
                 try { pluginSettings?.SetValueString("AutofocusChannel", key); } catch { }
             }
         }
@@ -132,6 +162,11 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
         public bool UseForAllAutofocus {
             get => detectorSelector.SelectedBehavior?.ContentId == OurDetectorId;
             set {
+                // Durante un autoenfoque el detector queda fijo
+                if (FocusChannelState.IsRunActive) {
+                    RaisePropertyChanged();
+                    return;
+                }
                 if (value) {
                     var current = detectorSelector.SelectedBehavior;
                     if (current != null && current.ContentId != OurDetectorId) previousDetectorId = current.ContentId;
@@ -163,6 +198,7 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
                 isRunning = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(IsIdle));
+                RaisePropertyChanged(nameof(IsChannelEditable));
                 RaisePropertyChanged(nameof(StartVisibility));
                 RaisePropertyChanged(nameof(CancelVisibility));
             }
@@ -211,35 +247,35 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
             cancelSource = new CancellationTokenSource();
             IsRunning = true;
 
-            var previousDetector = detectorSelector.SelectedBehavior;
             cameraMediator.RegisterCaptureBlock(this);
             try {
                 string channel = FocusChannelState.FromDisplayName(selectedChannel);
-                FocusChannelState.ActiveChannel = channel;
 
-                var ours = detectorSelector.Behaviors.FirstOrDefault(b => b.ContentId == typeof(RgbChannelStarDetection).FullName);
-                if (ours == null) {
-                    Message = Loc.T("AF.NoDetector");
-                    return;
-                }
-                detectorSelector.SelectedBehavior = ours;
+                // Falla con un mensaje claro si el canal no se puede medir (cámara mono, binning...)
+                ChannelPreflight.EnsureForAutofocus(channel, cameraMediator, filterWheelMediator, appProfileService);
 
-                var vm = autoFocusVMFactory.Create();
-                AutoFocusVM = vm;
+                // Mientras dura: canal y detector fijos, aunque se toquen desde la interfaz o desde el secuenciador
+                using (ChannelRunScope.Begin(channel, detectorSelector)) {
+                    var vm = autoFocusVMFactory.Create();
+                    AutoFocusVM = vm;
 
-                var report = await vm.StartAutoFocus(GetCurrentFilter(), cancelSource.Token, new Progress<ApplicationStatus>(p => Status = p?.Status ?? string.Empty));
-                if (report?.CalculatedFocusPoint != null) {
-                    SaveRecord(report.CalculatedFocusPoint);
-                    FocusFilePattern.Update(channel);
+                    var report = await vm.StartAutoFocus(GetCurrentFilter(), cancelSource.Token, new Progress<ApplicationStatus>(p => Status = p?.Status ?? string.Empty));
+                    if (report?.CalculatedFocusPoint != null) {
+                        SaveRecord(report.CalculatedFocusPoint, channel);
+                        FocusFilePattern.Update(channel);
+                    }
                 }
             } catch (OperationCanceledException) {
                 Message = Loc.T("AF.Cancelled");
+            } catch (ChannelNotMeasurableException ex) {
+                Logger.Error($"RGB HFR Analyzer: {ex.Message}");
+                Message = ex.Message;
+            } catch (ChannelRunRefusedException ex) {
+                Message = ex.Message;
             } catch (Exception ex) {
                 Logger.Error($"RGB HFR Analyzer: autofocus error: {ex}");
                 Message = Loc.T("AF.Error");
             } finally {
-                // Se devuelve siempre el detector que había antes
-                detectorSelector.SelectedBehavior = previousDetector;
                 cameraMediator.ReleaseCaptureBlock(this);
                 IsRunning = false;
             }
@@ -261,9 +297,9 @@ namespace AntonioAguadoRovira.NINA.Rgbfocus.RgbfocusDockables {
             }
         }
 
-        private void SaveRecord(FocusPoint point) {
+        private void SaveRecord(FocusPoint point, string channel) {
             var record = new FocusRecord {
-                Channel = selectedChannel,
+                Channel = FocusChannelState.DisplayName(channel),
                 Position = point.Position.ToString("0", CultureInfo.InvariantCulture),
                 Hfr = point.Value.ToString("0.00", CultureInfo.InvariantCulture),
                 Time = DateTime.Now.ToString("G", appProfileService.ActiveProfile.ApplicationSettings.Language ?? CultureInfo.CurrentCulture)
